@@ -36,3 +36,6 @@ order_details, berisi detail barang yang dibeli saat transaksi. Berisi,
 3. product_id : ID dari masing-masing produk transaksi
 4. price : harga barang masing-masing produk
 5. quantity : jumlah barang yang dibeli dari masing-masing produk
+
+## Tools yang digunakan
+Google bigquery : https://console.cloud.google.com/bigquery?sq=342996244348:ee64a05fdac340edb37038c657b4de9a
