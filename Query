@@ -1,0 +1,345 @@
+#Created by Nurliana
+
+#Jumlah baris data produk
+select count(*) as jumlah_baris from `ecommerce_challenge_dqlab.products`;
+
+#Jumlah kolom data produk
+select count(*) as jumlah_kolom
+from `ecommerce_challenge_dqlab.INFORMATION_SCHEMA.COLUMNS`
+where table_name = 'products';
+
+#Jumlah jenis kategorik produk
+select count(distinct category) as jumlah_kategori
+from `ecommerce_challenge_dqlab.products`;
+
+#Jumlah variabel produk yang bernilai null
+select
+    sum(case when product_id is null then 1 else 0 end) as null_product_id,
+    sum(case when desc_product is null or desc_product = "NA" then 1 else 0 end) as desc_product,
+    sum(case when category is null or category = "NA" then 1 else 0 end) as null_category,
+    sum(case when base_price is null then 1 else 0 end) as null_base_price
+from `ecommerce_challenge_dqlab.products`;
+
+#Jumlah baris data order
+select count(*) as jumlah_baris from `ecommerce_challenge_dqlab.orders`;
+
+#Jumlah kolom data order
+select count(*) as jumlah_kolom
+from `ecommerce_challenge_dqlab.INFORMATION_SCHEMA.COLUMNS`
+where table_name = 'orders';
+
+#Jumlah variabel order yang bernilai null
+select
+   sum(case when order_id is null then 1 else 0 end) as null_order_id,
+   sum(case when seller_id is null then 1 else 0 end) as  null_seller_id,
+   sum(case when buyer_id is null then 1 else 0 end) as null_buyer_id,
+   sum(case when kodepos is null then 1 else 0 end) as null_kodepos,
+   sum(case when subtotal is null then 1 else 0 end) as null_subtotal,
+   sum(case when discount is null then 1 else 0 end) as null_discount,
+   sum(case when total is null then 1 else 0 end) as null_total,
+   sum(case when created_at is null then 1 else 0 end) as null_created_at,
+   sum(case when paid_at is null or paid_at = "NA" then 1 else 0 end) as null_paid_at,
+   sum(case when delivery_at is null or delivery_at = "NA" then 1 else 0 end) as null_delivery_at
+from `ecommerce_challenge_dqlab.orders`;
+
+#Jumlah transaksi di bulan September 2019
+select count(*) as jumlah_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where date(created_at) between "2019-09-01" and "2019-09-30";
+
+#Jumlah transaksi di bulan November 2019
+select count(*) as jumlah_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where date(created_at) between "2019-11-01" and "2019-11-30";
+
+#Jumlah transaksi di bulan Januari 2020
+select count(*) as jumlah_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where date(created_at) between "2020-01-01" and "2020-01-31";
+
+#Jumlah transaksi di bulan Maret 2020
+select count(*) as jumlah_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where date(created_at) between "2020-03-01" and "2020-03-31";
+
+#Jumlah transaksi di bulan Mei 2020
+select count(*) as jumlah_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where date(created_at) between "2020-05-01" and "2020-05-31";
+
+#Jumlah transaksi yang tidak dibayar
+select count(*) as jumlah_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where paid_at = "NA";
+
+#Jumlah transaksi sudah bayar tapi belom dikirim
+select count(*) as jumlah_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where paid_at != "NA" and delivery_at = "NA";
+
+#Jumlah transaksi yang tidak dikrim, baik sudah dibayar maupun belum
+select count(*) as jumlah_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where delivery_at ="NA" and (paid_at !="NA" or paid_at="NA");
+
+#jumlah transaksi yang dikirim pada hari yang sama dengan tangal dibayar
+select count(*) as jumlah_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where delivery_at = paid_at;
+
+#Jumlah pengguna
+select count(*) as total_pengguna
+from `ecommerce_challenge_dqlab.users`;
+
+#Jumlah pengguna yang pernah bertransaksi sebagai pembeli
+select count(distinct buyer_id) as jumlah_pembeli
+from `ecommerce_challenge_dqlab.orders`;
+
+#Jumlah pengguna yang pernah bertransaksi sebagai penjual
+select count(distinct seller_id) as jumlah_penjual
+from `ecommerce_challenge_dqlab.orders`;
+
+#Jumlah pengguna yang pernah bertransaksi sebagai pembeli dan pernah sebagai penjual
+select count(distinct buyer_id) as jumlah_pembeli
+from `ecommerce_challenge_dqlab.orders`
+where buyer_id in (select seller_id from `ecommerce_challenge_dqlab.orders`);
+
+#5 pembeli dengan dengan total pembelian terbesar (berdasarkan total harga barang setelah diskon)
+select buyer_id, nama_user, sum(total) as jumlah_pembelian
+from `ecommerce_challenge_dqlab.users` as user
+join `ecommerce_challenge_dqlab.orders` as orders
+on user.user_id = orders.buyer_id
+group by 1,2
+order by 3 DESC
+limit 5;
+
+#pengguna yang tidak pernah menggunakan diskon ketika membeli barang dan merupakan 5 pembeli dengan transaksi terbanyak
+select buyer_id, nama_user, count(order_id) as total_pembelian
+from `ecommerce_challenge_dqlab.users` as user
+join `ecommerce_challenge_dqlab.orders` as orders
+on user.user_id = orders.buyer_id
+where discount = 0
+group by 1,2
+order by 3 DESC
+limit 5;
+
+#pengguna yang bertransaksi setidaknya 1 kali setiap bulan di tahun 2020 dengan rata-rata total amount per transaksi lebih dari 1 Juta
+SELECT
+	buyer_id,
+	email,
+	rata_rata,
+	month_count
+FROM
+(
+	SELECT
+		trx.buyer_id,
+		rata_rata,
+		jumlah_order,
+		month_count
+	FROM
+		(
+			SELECT
+				buyer_id,
+				round(avg(total),2) AS rata_rata
+			FROM
+				`ecommerce_challenge_dqlab.orders`
+			WHERE     
+				EXTRACT(YEAR FROM DATE(created_at)) = 2020
+			GROUP BY
+				1
+			HAVING
+				rata_rata > 1000000
+			ORDER BY
+				1 
+		) AS trx
+	JOIN
+		(
+			SELECT
+				buyer_id,
+				count(order_id) AS jumlah_order,
+				count(DISTINCT EXTRACT(MONTH FROM DATE(created_at))) AS month_count
+			FROM
+				`ecommerce_challenge_dqlab.orders`
+			WHERE     
+				EXTRACT(YEAR FROM DATE(created_at)) = 2020
+			GROUP BY
+				1
+			HAVING
+				month_count >= 5
+				AND
+				jumlah_order >= month_count
+			ORDER BY
+				1 
+		) AS months
+		ON trx.buyer_id = months.buyer_id
+) AS bfq
+JOIN `ecommerce_challenge_dqlab.users` ON buyer_id = user_id;
+
+#Domain email dari penjual di DQLab Store
+select distinct (split(email, "@")[offset(1)]) as domain,
+count(user_id) as jumlah_pengguna_domain
+from `ecommerce_challenge_dqlab.users`
+where user_id in (select seller_id from `ecommerce_challenge_dqlab.orders`)
+group by 1
+order by 1;
+
+#Top 5 produk yang dibeli di bulan desember 2019 berdasarkan total quantity
+select sum(od.quantity) as jumlah_produk, p.desc_product
+from `ecommerce_challenge_dqlab.orders_details` as od
+join `ecommerce_challenge_dqlab.products` as p
+on od.product_id = p.product_id
+join `ecommerce_challenge_dqlab.orders` as o
+on od.order_id = o.order_id
+where date(o.created_at) between "2019-12-01" and "2019-12-31"
+group by 2
+order by 1 desc
+limit 5;
+
+#10 Transaksi terbesar user 12476
+select seller_id, buyer_id, total as nilai_transaksi, created_at as tanggal_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where buyer_id = 12476
+order by 3 desc
+limit 10;
+
+#Transaksi per bulan di tahun 2020
+select FORMAT_DATE('%Y%m', DATE(created_at)) as tahun_bulan, 
+count(*) as jumlah_transaksi, 
+sum(total) as total_nilai_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where EXTRACT(YEAR FROM DATE(created_at)) = 2020
+group by 1
+order by 1;
+
+#10 pembeli dengan rata-rata nilai transaksi terbesar yang bertransaksi minimal 2 kali di Januari 2020
+select buyer_id, count(*) as jumlah_transaksi, avg(total) as avg_nilai_transaksi
+from `ecommerce_challenge_dqlab.orders`
+where date(created_at) between "2020-01-01" and "2020-01-31"
+group by 1
+having count(*)>= 2
+order by 3 desc
+limit 10;
+
+
+#Semua nilai transaksi minimal 20.000.000 di bulan Desember 2019
+select u.nama_user, o.total, o.created_at as tanggal_transaksi
+from `ecommerce_challenge_dqlab.orders` as o
+inner join `ecommerce_challenge_dqlab.users` as u
+on o.buyer_id = u.user_id
+where o.total >= 20000000 and date(o.created_at) between "2019-12-01" and "2019-12-31"
+order by 1;
+
+#5 Kategori dengan total quantity terbanyak di tahun 2020, hanya untuk transaksi yang sudah terkirim ke pembeli
+select p.category, sum(od.quantity) as total_quantity, sum(od.price) as total_price
+from `ecommerce_challenge_dqlab.orders_details` as od
+join `ecommerce_challenge_dqlab.products` as p
+on od.product_id = p.product_id
+join `ecommerce_challenge_dqlab.orders` as o
+on o.order_id = od.order_id
+where EXTRACT(YEAR FROM DATE(o.created_at)) = 2020 and  delivery_at is not null
+group by 1
+order by 2 desc
+limit 5;
+
+select count(delivery_at) as tes
+from `ecommerce_challenge_dqlab.orders`
+where delivery_at ="NA";
+
+#Pembeli yang sudah bertransaksi lebih dari 5 kali, dan setiap transaksi lebih dari 2,000,000
+select nama_user, 
+count(*) as jumlah_transaksi, 
+sum(total) as total_nilai_transaksi,
+min(total) as min_nilai_transaksi
+from `ecommerce_challenge_dqlab.orders` as o
+inner join `ecommerce_challenge_dqlab.users` as u
+on o.buyer_id = u.user_id
+group by user_id, nama_user
+having count(*) > 5 and min(total) >= 2000000
+order by 3 desc;
+
+#pengguna yang menjadi dropshipper, yakni pembeli yang membeli barang akan tetapi dikirim ke orang lain. Ciri-cirinya yakni transaksinya banyak, dengan alamat yang berbeda-beda.
+#Mencari pembeli dengan 10 kali transaksi atau lebih yang alamat pengiriman transaksi selalu berbeda setiap transaksi.
+select u.nama_user, 
+count(*) as jumlah_transaksi, 
+count(distinct(u.kodepos)) as distinct_kodepos, 
+sum(o.total) as total_nilai_transaksi, 
+avg(o.total) as avg_nilai_transaksi
+from `ecommerce_challenge_dqlab.users` as u
+inner join `ecommerce_challenge_dqlab.orders` as o
+on o.buyer_id = u.user_id
+group by user_id, nama_user
+having count(*) >= 10 and count(*) = count(distinct o.kodepos)
+order by 2 desc;
+
+#Pengguna yang menjadi reseller offline atau punya toko offline, yakni pembeli yang sering sekali membeli barang dan seringnya dikirimkan ke alamat yang sama. Pembelian juga dengan quantity produk yang banyak. Sehingga kemungkinan barang ini akan dijual lagi
+#Pembeli yang punya 8 tau lebih transaksi yang alamat pengiriman transaksi sama dengan alamat pengiriman utama, dan rata-rata total quantity per transaksi lebih dari 10
+SELECT
+	nama_user,
+	count(*) AS jumlah_transaksi,
+	sum(total) AS total_nilai_transaksi,
+	avg(total) AS avg_nilai_transaksi,
+	avg(total_quantity) AS avg_quantity_per_transaksi
+FROM
+	`ecommerce_challenge_dqlab.orders` as o
+INNER JOIN
+	`ecommerce_challenge_dqlab.users` as u
+	ON buyer_id = user_id
+INNER JOIN
+	(
+		SELECT order_id, sum(quantity) AS total_quantity
+		FROM `ecommerce_challenge_dqlab.orders_details`
+		GROUP BY 1
+	) AS summary_order
+	USING(order_id)
+WHERE
+	o.kodepos = u.kodepos
+GROUP BY
+	user_id,
+	nama_user
+HAVING
+	count(*) >= 8 AND avg(total_quantity) > 10
+ORDER BY 3 DESC;
+
+#Penjual yang juga pernah bertransaksi sebagai pembeli minimal 7 kali
+SELECT
+	nama_user,
+	jumlah_transaksi_beli,
+	jumlah_transaksi_jual
+FROM
+	`ecommerce_challenge_dqlab.users`
+INNER JOIN
+	(
+		SELECT buyer_id, count(1) AS jumlah_transaksi_beli
+		FROM `ecommerce_challenge_dqlab.orders`
+		GROUP BY 1
+	) AS buyer
+	ON buyer_id = user_id
+INNER JOIN
+	(
+		SELECT seller_id, count(1) AS jumlah_transaksi_jual
+		FROM `ecommerce_challenge_dqlab.orders`
+		GROUP BY 1
+	) AS seller
+	ON seller_id = user_id
+WHERE
+	jumlah_transaksi_beli >= 7
+ORDER BY 1;
+
+#Lama transaksi dibayar
+SELECT
+  FORMAT_DATE('%Y%m', created_at) AS tahun_bulan,
+  COUNT(*) AS jumlah_transaksi,
+  AVG(DATE_DIFF(SAFE.PARSE_DATE('%d/%m/%Y', paid_at), created_at, DAY)) AS avg_lama_dibayar,
+  MIN(DATE_DIFF(SAFE.PARSE_DATE('%d/%m/%Y', paid_at), created_at, DAY)) AS min_lama_dibayar,
+  MAX(DATE_DIFF(SAFE.PARSE_DATE('%d/%m/%Y', paid_at), created_at, DAY)) AS max_lama_dibayar
+FROM
+  `ecommerce_challenge_dqlab.orders`
+WHERE
+  SAFE.PARSE_DATE('%d/%m/%Y', paid_at) IS NOT NULL
+GROUP BY tahun_bulan
+ORDER BY tahun_bulan;
+
+
+select SAFE.PARSE_DATE('%d/%m/%Y', paid_at) as paid_at
+from `ecommerce_challenge_dqlab.orders`
+where paid_at ="NA";
