@@ -31,7 +31,7 @@ orders, berisi transaksi pembelian dari pembeli ke penjual. Berisi,
 
 
 order_details, berisi detail barang yang dibeli saat transaksi. Berisi,
-1. order_detail_id : ID table ini\
+1. order_detail_id : ID table ini
 2. order_id : ID dari transaksi
 3. product_id : ID dari masing-masing produk transaksi
 4. price : harga barang masing-masing produk
