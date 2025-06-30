@@ -8,13 +8,14 @@ users, berisi detail data pengguna. Berisi,
 2. nama_user : nama pengguna
 3. kodepos : kodepos alamat utama dari pengguna
 4. email : email dari pengguna
-
+Total data/baris = 17.936
 
 products, berisi detail data dari produk yang dijual. Berisi,
 1. product_id : ID produk
 2. desc_product : nama produk
 3. category : kategori produk
 4. base_price : harga asli dari produk
+Total data/baris = 1.145 
 
 
 orders, berisi transaksi pembelian dari pembeli ke penjual. Berisi,
@@ -28,6 +29,7 @@ orders, berisi transaksi pembelian dari pembeli ke penjual. Berisi,
 8. created_at : tanggal transaksi
 9. paid_at : tanggal dibayar
 10. delivery_at : tanggal pengiriman
+Total data/baris = 74.874
 
 
 order_details, berisi detail barang yang dibeli saat transaksi. Berisi,
@@ -36,6 +38,7 @@ order_details, berisi detail barang yang dibeli saat transaksi. Berisi,
 3. product_id : ID dari masing-masing produk transaksi
 4. price : harga barang masing-masing produk
 5. quantity : jumlah barang yang dibeli dari masing-masing produk
+Total data/baris = 187.452
 
 ## Tools yang digunakan
 Google bigquery : https://console.cloud.google.com/bigquery?sq=342996244348:ee64a05fdac340edb37038c657b4de9a
