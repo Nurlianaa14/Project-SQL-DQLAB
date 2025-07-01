@@ -13,6 +13,45 @@ Dataset yang digunakan merupakan data dari **DQLab Store**
 | **orders** | Data transaksi pembelian | 74.874 |
 | **order_details** | Detail barang pada tiap transaksi | 187.452 |
 
+### Tabel 1: `users`
+| Kolom | Deskripsi |
+|---|---|
+| **user_id** | ID unik pengguna |
+| **nama_user** | Nama pengguna |
+| **kodepos** | Kodepos dari alamat utama pengguna |
+| **email** | Alamat email pengguna |
+
+### Tabel 2: `products`
+| Kolom | Deskripsi |
+|---|---|
+| **product_id** | ID unik produk |
+| **desc_product** | Nama/Deskripsi produk |
+| **category** | Kategori produk |
+| **base_price** | Harga asli produk |
+
+### Tabel 3: `orders`
+| Kolom | Deskripsi |
+|---|---|
+| **order_id** | ID transaksi |
+| **seller_id** | ID pengguna yang menjual |
+| **buyer_id** | ID pengguna yang membeli |
+| **kodepos** | Kodepos alamat pengiriman transaksi |
+| **subtotal** | Total harga barang sebelum diskon |
+| **discount** | Diskon transaksi |
+| **total** | Total harga setelah diskon |
+| **created_at** | Tanggal transaksi dibuat |
+| **paid_at** | Tanggal pembayaran |
+| **delivery_at** | Tanggal pengiriman barang |
+
+### Tabel 4: `order_details`
+| Kolom | Deskripsi |
+|---|---|
+| **order_detail_id** | ID unik detail transaksi |
+| **order_id** | ID transaksi |
+| **product_id** | ID produk yang dibeli |
+| **price** | Harga barang pada transaksi tersebut |
+| **quantity** | Jumlah barang yang dibeli |
+
 ---
 
 ## 🛠️ Tools yang Digunakan
