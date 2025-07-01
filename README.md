@@ -13,7 +13,7 @@ Dataset yang digunakan merupakan data dari **DQLab Store**
 | **orders** | Data transaksi pembelian | 74.874 |
 | **order_details** | Detail barang pada tiap transaksi | 187.452 |
 
-### Tabel 1: `users`
+#### Tabel 1: `users`
 | Kolom | Deskripsi |
 |---|---|
 | **user_id** | ID unik pengguna |
@@ -21,7 +21,7 @@ Dataset yang digunakan merupakan data dari **DQLab Store**
 | **kodepos** | Kodepos dari alamat utama pengguna |
 | **email** | Alamat email pengguna |
 
-### Tabel 2: `products`
+#### Tabel 2: `products`
 | Kolom | Deskripsi |
 |---|---|
 | **product_id** | ID unik produk |
@@ -29,7 +29,7 @@ Dataset yang digunakan merupakan data dari **DQLab Store**
 | **category** | Kategori produk |
 | **base_price** | Harga asli produk |
 
-### Tabel 3: `orders`
+#### Tabel 3: `orders`
 | Kolom | Deskripsi |
 |---|---|
 | **order_id** | ID transaksi |
@@ -43,7 +43,7 @@ Dataset yang digunakan merupakan data dari **DQLab Store**
 | **paid_at** | Tanggal pembayaran |
 | **delivery_at** | Tanggal pengiriman barang |
 
-### Tabel 4: `order_details`
+#### Tabel 4: `order_details`
 | Kolom | Deskripsi |
 |---|---|
 | **order_detail_id** | ID unik detail transaksi |
