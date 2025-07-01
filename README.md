@@ -1,48 +1,102 @@
-## Data yang digunakan
-Dataset yang digunakan merupakan data dari DQLab Store yang merupakan e-commerce dimana pembeli dan penjual saling bertemu. Pengguna bisa membeli barang dari pengguna lain yang berjualan. Setiap pengguna bisa menjadi pembeli sekaligus penjual.
+# 🛒 Analisis Data E-commerce DQLab Store dengan Google BigQuery
 
-Ada 4 tabel yang tersedia,
+## 📂 Data yang Digunakan
 
-users, berisi detail data pengguna. Berisi,
-1. user_id : ID pengguna
-2. nama_user : nama pengguna
-3. kodepos : kodepos alamat utama dari pengguna
-4. email : email dari pengguna
+Dataset yang digunakan merupakan data dari **DQLab Store**
 
-Total data/baris = 17.936
+### Struktur Tabel
 
-products, berisi detail data dari produk yang dijual. Berisi,
-1. product_id : ID produk
-2. desc_product : nama produk
-3. category : kategori produk
-4. base_price : harga asli dari produk
+| Tabel | Deskripsi | Jumlah Baris |
+|---|---|---|
+| **users** | Data detail pengguna | 17.936 |
+| **products** | Data detail produk yang dijual | 1.145 |
+| **orders** | Data transaksi pembelian | 74.874 |
+| **order_details** | Detail barang pada tiap transaksi | 187.452 |
 
-Total data/baris = 1.145 
+---
 
+## 🛠️ Tools yang Digunakan
 
-orders, berisi transaksi pembelian dari pembeli ke penjual. Berisi,
-1. order_id : ID transaksi
-2. seller_id : ID dari pengguna yang menjual
-3. buyer_id : ID dari pengguna yang membeli
-4. kodepos : kodepos alamat pengirimian transaksi (bisa beda dengan alamat utama)
-5. subtotal : total harga barang sebelum diskon
-6. discount : diskon dari transaksi
-7. total : total harga barang setelah dikurangi diskon, yang dibayarkan pembeli
-8. created_at : tanggal transaksi
-9. paid_at : tanggal dibayar
-10. delivery_at : tanggal pengiriman
+- **Google BigQuery**  
+[https://console.cloud.google.com/bigquery?sq=342996244348:ee64a05fdac340edb37038c657b4de9a](https://console.cloud.google.com/bigquery?sq=342996244348:ee64a05fdac340edb37038c657b4de9a)
 
-Total data/baris = 74.874
+---
 
+## 📌 Daftar Latihan Query SQL
 
-order_details, berisi detail barang yang dibeli saat transaksi. Berisi,
-1. order_detail_id : ID table ini
-2. order_id : ID dari transaksi
-3. product_id : ID dari masing-masing produk transaksi
-4. price : harga barang masing-masing produk
-5. quantity : jumlah barang yang dibeli dari masing-masing produk
+Berikut adalah beberapa contoh latihan query yang saya kerjakan:
 
-Total data/baris = 187.452
+### 📊 1. Exploratory Data (Jumlah Data dan Missing Value)
 
-## Tools yang digunakan
-Google bigquery : https://console.cloud.google.com/bigquery?sq=342996244348:ee64a05fdac340edb37038c657b4de9a
+- **Jumlah baris dan kolom pada tabel `products` dan `orders`**
+- **Jumlah kategori produk unik**
+- **Cek missing value pada setiap kolom**
+
+### 📈 2. Analisis Transaksi
+
+- **Jumlah transaksi per bulan (September 2019, November 2019, Januari 2020, Maret 2020, Mei 2020)**
+- **Jumlah transaksi yang belum dibayar (`paid_at = NA`)**
+- **Jumlah transaksi yang sudah dibayar tapi belum dikirim**
+- **Transaksi yang dikirim pada hari yang sama dengan pembayaran**
+
+### 👥 3. Analisis Pengguna (Users)
+
+- **Jumlah total pengguna**
+- **Jumlah pengguna yang pernah menjadi pembeli**
+- **Jumlah pengguna yang pernah menjadi penjual**
+- **Jumlah pengguna yang pernah menjadi pembeli sekaligus penjual**
+
+### 🏅 4. Customer Ranking & Behavior
+
+- **Top 5 pembeli dengan total pembelian terbesar**
+- **Top 5 pembeli non-diskon dengan transaksi terbanyak**
+- **Pembeli aktif sepanjang tahun 2020 dengan rata-rata transaksi > 1 juta**
+
+### 📬 5. Analisis Domain Email Penjual
+
+- **Domain email teratas dari para penjual**
+
+### 📦 6. Analisis Produk
+
+- **Top 5 produk terlaris di Desember 2019 (berdasarkan quantity)**
+- **5 kategori dengan total quantity terbanyak di tahun 2020 (khusus transaksi yang sudah terkirim)**
+
+### 💰 7. Analisis Transaksi Individual dan Bulanan
+
+- **10 transaksi terbesar oleh user 12476**
+- **Transaksi per bulan sepanjang tahun 2020**
+- **10 pembeli dengan rata-rata transaksi terbesar di Januari 2020 (minimal 2 transaksi)**
+- **Transaksi di atas 20 juta selama Desember 2019**
+
+### 📦 8. Segmentasi Khusus Pelanggan
+
+- **Dropshipper:** Pembeli dengan ≥10 transaksi dan pengiriman selalu ke alamat berbeda.
+- **Reseller Offline:** Pembeli dengan ≥8 transaksi, alamat pengiriman sama dengan alamat utama, dan rata-rata quantity per transaksi > 10.
+- **Penjual yang juga pembeli aktif:** Penjual yang pernah melakukan ≥7 transaksi sebagai pembeli.
+
+### ⏳ 9. Analisis Durasi Pembayaran
+
+- **Rata-rata, minimum, dan maksimum lama waktu pembayaran (dari tanggal order ke tanggal bayar)**  
+(Per bulan selama tahun 2020)
+
+---
+
+## ✅ Skills dan Pembelajaran yang Didapat
+
+- **Penguasaan dasar-dasar BigQuery**
+- **Penggunaan fungsi agregat (COUNT, SUM, AVG, MIN, MAX)**
+- **Query kondisi dan filtering (`WHERE`, `HAVING`, `GROUP BY`)**
+- **Pengolahan tanggal dengan fungsi `EXTRACT`, `FORMAT_DATE`, `SAFE.PARSE_DATE`**
+- **Analisis segmentasi pengguna berbasis perilaku**
+- **Join antar tabel (`INNER JOIN`)**
+- **Analisis missing value**
+- **Menggunakan subquery untuk analisis lebih kompleks**
+
+---
+
+## 📌 Catatan Tambahan
+Seluruh latihan ini merupakan bagian dari **latihan self-learning SQl BigQuery** dengan studi kasus data e-commerce.  
+Project DQLab **Data Analyst E-Commerce Challenge**
+
+---
+
